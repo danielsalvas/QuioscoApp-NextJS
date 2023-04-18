@@ -1,7 +1,24 @@
 import Head from "next/head";
 import Sidebar from "@/components/Sidebar";
+import Modal from "react-modal";
+import useQuiosco from "@/hooks/useQuiosco";
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+};
+
+Modal.setAppElement('#__next');
 
 const Layout = ({ children, page }) => {
+
+  const { modal } = useQuiosco();
   return (
     <>
       <Head>
@@ -18,6 +35,15 @@ const Layout = ({ children, page }) => {
           <div className="p-10">{children}</div>
         </main>
       </div>
+
+      {modal && (
+        <Modal
+          isOpen={modal}
+          style={customStyles}
+        >
+          <h1>Modal</h1>
+        </Modal>
+      )}
     </>
   );
 };

@@ -3,25 +3,25 @@ import Sidebar from "@/components/Sidebar";
 import Modal from "react-modal";
 import useQuiosco from "@/hooks/useQuiosco";
 import ProductModal from "@/components/ProductModal";
+import Steps from "@/components/Steps";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 const customStyles = {
   content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
   },
 };
 
-Modal.setAppElement('#__next');
+Modal.setAppElement("#__next");
 
 const Layout = ({ children, page }) => {
-
-  const { modal, product } = useQuiosco();
+  const { modal } = useQuiosco();
   return (
     <>
       <Head>
@@ -35,15 +35,15 @@ const Layout = ({ children, page }) => {
         </aside>
 
         <main className="md:w-8/12 xl:w-3/4 2xl:w-4/5 h-screen overflow-y-scroll">
-          <div className="p-10">{children}</div>
+          <div className="p-10">
+            <Steps />
+            {children}
+          </div>
         </main>
       </div>
 
       {modal && (
-        <Modal
-          isOpen={modal}
-          style={customStyles}
-        >
+        <Modal isOpen={modal} style={customStyles}>
           <ProductModal />
         </Modal>
       )}

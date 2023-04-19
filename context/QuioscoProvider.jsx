@@ -11,8 +11,10 @@ const QuioscoProvider = ({ children }) => {
   const [product, setProduct] = useState({});
   const [modal, setModal] = useState(false);
   const [order, setOrder] = useState([]);
+  const [name, setName] = useState("");
+  const [total, setTotal] = useState(0);
 
-  const router = useRouter()
+  const router = useRouter();
 
   const getCategories = async () => {
     const { data } = await axios("/api/categories");
@@ -27,10 +29,19 @@ const QuioscoProvider = ({ children }) => {
     setActualCategory(categories[0]);
   }, [categories]);
 
+  useEffect(() => {
+    const newTotal = order.reduce(
+      (sum, currentProduct) =>
+        currentProduct.price * currentProduct.quantity + sum,
+      0
+    );
+    setTotal(newTotal);
+  }, [order]);
+
   const handleClickCategory = (id) => {
     const category = categories.filter((catego) => catego.id === id);
     setActualCategory(category[0]);
-    router.push('/')
+    router.push("/");
   };
 
   const handleSetProduct = (product) => {
@@ -68,7 +79,21 @@ const QuioscoProvider = ({ children }) => {
 
   const handleDeleteProduct = (id) => {
     const updateOrder = order.filter((product) => product.id !== id);
-    setOrder(updateOrder)
+    setOrder(updateOrder);
+  };
+
+  const handleOrder = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post("/api/orders", {
+        order,
+        name,
+        total,
+        date: Date.now().toString(),
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -79,12 +104,16 @@ const QuioscoProvider = ({ children }) => {
         product,
         modal,
         order,
+        name,
+        total,
         handleClickCategory,
         handleSetProduct,
         handleChangeModal,
         handleAddOrder,
         handleEditQuantities,
-        handleDeleteProduct
+        handleDeleteProduct,
+        setName,
+        handleOrder,
       }}
     >
       {children}

@@ -6,8 +6,9 @@ const QuioscoContext = createContext();
 const QuioscoProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [actualCategory, setActualCategory] = useState({});
-  const [product, setProduct] = useState({})
-  const [modal, setModal] = useState(false)
+  const [product, setProduct] = useState({});
+  const [modal, setModal] = useState(false);
+  const [order, setOrder] = useState([]);
 
   const getCategories = async () => {
     const { data } = await axios("/api/categories");
@@ -19,7 +20,7 @@ const QuioscoProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    setActualCategory(categories[0])
+    setActualCategory(categories[0]);
   }, [categories]);
 
   const handleClickCategory = (id) => {
@@ -27,13 +28,29 @@ const QuioscoProvider = ({ children }) => {
     setActualCategory(category[0]);
   };
 
-  const handleSetProduct = product => {
-    setProduct(product)
-  }
+  const handleSetProduct = (product) => {
+    setProduct(product);
+  };
 
   const handleChangeModal = () => {
-    setModal(!modal)
-  }
+    setModal(!modal);
+  };
+
+  const handleAddOrder = (product) => {
+    if (order.some((productState) => productState.id === product.id)) {
+      //Update the quantity if the product exists
+
+      const updatedOrder = order.map((productState) =>
+        productState.id === product.id ? product : productState
+      );
+      setOrder(updatedOrder)
+    } else {
+      //If is new, we add the product to the order
+      setOrder([...order, product]);
+    }
+
+    setModal(false)
+  };
 
   return (
     <QuioscoContext.Provider
@@ -42,9 +59,11 @@ const QuioscoProvider = ({ children }) => {
         actualCategory,
         product,
         modal,
+        order,
         handleClickCategory,
         handleSetProduct,
-        handleChangeModal
+        handleChangeModal,
+        handleAddOrder,
       }}
     >
       {children}

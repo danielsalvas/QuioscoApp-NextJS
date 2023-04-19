@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 const QuioscoContext = createContext();
 
@@ -10,6 +11,8 @@ const QuioscoProvider = ({ children }) => {
   const [product, setProduct] = useState({});
   const [modal, setModal] = useState(false);
   const [order, setOrder] = useState([]);
+
+  const router = useRouter()
 
   const getCategories = async () => {
     const { data } = await axios("/api/categories");
@@ -27,6 +30,7 @@ const QuioscoProvider = ({ children }) => {
   const handleClickCategory = (id) => {
     const category = categories.filter((catego) => catego.id === id);
     setActualCategory(category[0]);
+    router.push('/')
   };
 
   const handleSetProduct = (product) => {
@@ -55,6 +59,18 @@ const QuioscoProvider = ({ children }) => {
     setModal(false);
   };
 
+  const handleEditQuantities = (id) => {
+    const updateModalProduct = order.filter((product) => product.id === id);
+    setProduct(updateModalProduct[0]);
+
+    setModal(!modal);
+  };
+
+  const handleDeleteProduct = (id) => {
+    const updateOrder = order.filter((product) => product.id !== id);
+    setOrder(updateOrder)
+  };
+
   return (
     <QuioscoContext.Provider
       value={{
@@ -67,6 +83,8 @@ const QuioscoProvider = ({ children }) => {
         handleSetProduct,
         handleChangeModal,
         handleAddOrder,
+        handleEditQuantities,
+        handleDeleteProduct
       }}
     >
       {children}
